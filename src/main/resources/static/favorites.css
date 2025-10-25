@@ -1,0 +1,103 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+body{
+  background-color: #f8f8f8;
+}
+.container {
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 150px;
+  display: flex;
+  align-items: center;
+  /* gap: 24px; */
+  /* justify-content: space-around; */
+  background-color: white
+}
+
+/* 브랜드 */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color:#1a73e8;
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: .2px;
+  color: #111
+}
+
+/* 메뉴 */
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  color: #5f6368;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: .15s ease;
+}
+
+.nav-link.pill {
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 0 12px;
+  border-radius: 12px;
+}
+
+/* 인증 영역 */
+.auth {
+  display: flex;
+  align-items: center;
+  gap: 18px
+}
+
+.auth .login {
+  color: #444;
+  text-decoration: none;
+}
+
+.auth .login:hover {
+  color: #111
+}
+
+.auth .signup {
+  text-decoration: none;
+  color: #fff;
+  background-color: #1a73e8;
+  padding: 10px 14px;
+  border-radius: 10px;
+} 
+
+.auth .signup:hover {
+  filter: brightness(1.05)
+}
+
+#mainn{
+  margin-top: 30px;
+  margin-left: 200px;
+}

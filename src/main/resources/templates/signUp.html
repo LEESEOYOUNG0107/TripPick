@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sign up</title>
+    <link rel="stylesheet" th:href="@{/login.css}">
+</head>
+
+<body>
+    <form th:action="@{/signup}" method="post">
+        <table>
+            <tr><td><h1>Sign Up</h1></td></tr>
+            <tr th:if="${error}">
+                <td style="color: maroon; text-align: center;">
+                    <span th:text="${error}"></span>
+                </td>
+            </tr>
+            <tr><td><input type="text" class="inputt" name="username" placeholder="id"></td></tr>
+            <tr><td><input type="password" class="inputt"name="password" placeholder="password"></td></tr>
+            <tr><td><input type="submit" id="button" value="sign up"></td></tr>
+        </table>
+    </form>
+</body>
+
+</html>

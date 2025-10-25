@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.7' // (버전은 달라져도 괜찮습니다)
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// 회원가입/로그인에 필요한 모든 도구
+dependencies {
+    // 1. '스프링 웹' (컨트롤러, 웹 서버 등)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 2. HTML을 다루는 도구
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // 3. 데이터베이스(JPA)를 다루는 도구
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // 4. 보안(로그인/회원가입)을 다루는 도구
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // 5. MySQL 데이터베이스 연결 도구
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 6. 테스트용 도구
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

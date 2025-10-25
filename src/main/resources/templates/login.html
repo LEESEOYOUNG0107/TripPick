@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" th:href="@{/login.css}">
+</head>
+
+<body>
+    
+    <table>
+        <form th:action="@{/login}" method="post">
+            <tr><td><h1>Login</h1></td></tr>
+            <tr th:if="${param.error}">
+                <td style="color: maroon; text-align: center">
+                    아이디 또는 비밀번호가 올바르지 않습니다.
+                </td>
+            </tr>
+            <tr><td><input type="text" class="inputt" name="username" placeholder="id"></td></tr>
+            <tr><td><input type="password" class="inputt" name="password" placeholder="password"></td></tr>
+            <tr><td><input type="submit" id="button" value="login"></td></tr>
+        </form>
+    </table>
+
+</body>
+
+</html>
