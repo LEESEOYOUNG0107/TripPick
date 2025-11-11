@@ -1,6 +1,9 @@
 package com.example.trippick;
 
+import jdk.jfr.Registered;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional; // NullPointerException을 방지하기 위한 Optional 클래스를 가져옵니다.
 
 
