@@ -1,28 +1,42 @@
 package com.example.trippick;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class AIController {
-
     @Autowired
     private AIService aiService;
+    @Autowired // <-- 1. 이 어노테이션과
+    private FavoriteService favoriteService;
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+
+            // 찜한 장소 이름 목록을 모델에 추가
+            Set<String> favoriteNames = getFavoriteNames(principal.getName());
+            model.addAttribute("favoriteNames", favoriteNames);
+        }else{
+            // 로그인 안 한 사용자를 위해 빈 목록 추가
+            model.addAttribute("favoriteNames", Collections.emptySet());
+        }
         return "index";
     }
 
     @PostMapping("/askAI")
     public String askAI(@RequestParam("area") String area,
                         @RequestParam("mood") String mood,
-                        Model model) {
+                        Model model, Principal principal) {
 
         // 콘솔 출력 (디버깅용 나중에지워야됌!!!)
         System.out.println("사용자로부터 입력받은 값: " + area + ", " + mood);
@@ -33,6 +47,7 @@ public class AIController {
 
         String content=aiService.getAIResponse(area,mood);
         List<PlaceInfo> placeInfos = parseJsonArray(content);
+
         System.out.println("########################## " + placeInfos.size());
         for (PlaceInfo placeInfo : placeInfos) {
             System.out.println("=== " + placeInfo.name + " ===");
@@ -46,12 +61,31 @@ public class AIController {
             System.out.println("이미지 URL: " + placeInfo.imageUrl);
             System.out.println();
         }
+
         model.addAttribute("area", area);
         model.addAttribute("mood", mood);
         model.addAttribute("placeInfos",  placeInfos);
+
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+
+            // 찜한 장소 이름 목록을 모델에 추가
+            Set<String> favoriteNames = getFavoriteNames(principal.getName());
+            model.addAttribute("favoriteNames", favoriteNames);
+        } else {
+            // 로그인 안 한 사용자를 위해 빈 목록 추가
+            model.addAttribute("favoriteNames", Collections.emptySet());
+        }
         return "index";
     }
 
+    // 찜한 장소 이름만 가져오는 헬퍼 메소드
+    private Set<String> getFavoriteNames(String username) {
+        List<Favorite> favorites = favoriteService.getFavorites(username);
+        return favorites.stream()
+                .map(Favorite::getPlaceName) // Favorite 객체에서 장소 이름만 뽑아서
+                .collect(Collectors.toSet()); // Set(중복 없는 목록)으로 만듦
+    }
 
     private static List<PlaceInfo> parseJsonArray(String json) {
         List<PlaceInfo> result = new ArrayList<>();

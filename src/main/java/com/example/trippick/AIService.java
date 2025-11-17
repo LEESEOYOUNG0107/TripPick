@@ -1,5 +1,4 @@
 package com.example.trippick;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,19 +8,14 @@ import java.util.Map;
 import java.util.ArrayList;
 
 @Service
-
 public class AIService {
-
-    @Value("${openai.api.key}")
+//    @Value("${openai.api.key}")
     private String apiKey;
-
     private final RestTemplate restTemplate = new RestTemplate();
-
     /**
      * 프롬포트작성
      */
     public String getAIResponse(String area,String mood) {
-
         String prompt = String.format(
                 "%s 지역에서 '%s'의 조건에 해당하는 실제로 존재하는 장소를 정확히 10개 추천하고, 다음 JSON 형식에 맞춰 응답해줘. " +
                         "응답은 반드시 JSON 배열(각 원소는 아래 객체 형식)로만 출력해야 하고, 형식과 필드 이름은 원본과 정확히 일치해야 해. " +

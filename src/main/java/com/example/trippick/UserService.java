@@ -26,14 +26,7 @@ public class UserService implements UserDetailsService {
         // DB에서 사용자를 찾습니다.
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
-
-        // '스프링 시큐리티'가 알아듣는 'UserDetails' 객체로 변환해서 반환합니다.
-        // (이 객체 안에 DB의 '암호화된 비밀번호'가 들어있습니다)
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")) // 기본 권한
-        );
+        return user;
     }
 
     // 회원가입 메서드

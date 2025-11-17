@@ -34,6 +34,9 @@ dependencies {
     // 5. MySQL 데이터베이스 연결 도구
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // HTML(Thymeleaf)과 보안 시스템(Spring Security)을 서로 연결해 주는 플러그인
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
     // 6. 테스트용 도구
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

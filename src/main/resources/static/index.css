@@ -1,0 +1,200 @@
+a{
+    text-decoration: none;
+}
+/* modal header: 이미지가 full-width인 경우 버튼을 이미지 위에 절대 배치 */
+.modal-header { position: relative; }
+
+/* 버튼 위치: modal-header 내부에 절대 배치(필요시 left/right/top 값 조정) */
+.fav-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;                 /* 왼쪽 상단에 위치시키려면 left 사용 */
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.94);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;             /* 기본(비활성) 색상 */
+    z-index: 30;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    transition: transform .12s ease, background .12s ease, color .12s ease;
+    padding: 0;
+}
+
+/* 터치 친화성 - 모바일에서 크기 확보 */
+@media (max-width: 480px) {
+    .fav-btn { width: 50px; height: 50px; border-radius: 12px; top: 10px; left: 10px; }
+}
+
+/* 하트 경로(기본: 테두리만) */
+.fav-btn .heart-path {
+    stroke: currentColor;
+    stroke-width: 1.2;
+    fill: none;
+    transition: fill .18s ease, stroke .18s ease, transform .18s ease;
+    transform-origin: center;
+}
+
+/* 호버 효과 */
+.fav-btn:hover { transform: scale(1.06); box-shadow: 0 10px 26px rgba(2,6,23,0.08); }
+
+/* 활성 상태(즐겨찾기 되어있음) */
+.fav-btn.active {
+    background: linear-gradient(180deg, #fff0f0, #fff7f7);
+    color: #ef4444;             /* 채운 하트 색상 */
+}
+
+/* 활성일 때 하트 채우기 + 펄스 애니메이션 */
+.fav-btn.active .heart-path {
+    fill: currentColor;
+    stroke: currentColor;
+    animation: fav-pop .32s cubic-bezier(.2,.8,.2,1);
+}
+
+/* 짧은 펄스 애니메이션 */
+@keyframes fav-pop {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    60% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 닫기 버튼: 오른쪽 상단 고정 */
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255,255,255,0.94);
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40; /* 닫기 버튼을 위에 보이게 */
+    box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+/* 모바일에서 터치 편의성 */
+@media (max-width:480px) {
+    .fav-btn, .close-btn { width:52px; height:52px; border-radius:12px; }
+}
+:root{
+    --bg:#f6f7f9;
+    --accent:#2563eb;
+    --dark:#0f172a;
+    --muted:#475569;
+}
+html,body{height:100%;margin:0;font-family:"Noto Sans KR",system-ui,Arial,sans-serif;background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased;}
+.app-header{
+    position:fixed;top:0;left:0;right:0;height:64px;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:60;box-shadow:0 1px 0 rgba(15,23,42,0.04);
+    transition:transform .28s;
+}
+.app-header.hidden{ transform: translateY(-100%); }
+.logo{ display:flex;align-items:center;gap:10px;font-weight:700;color:var(--dark); }
+.logo .mark{ width:34px;height:34px;background:var(--accent);border-radius:8px; }
+.nav-actions{ display:flex;align-items:center;gap:12px; }
+.btn{ background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+.btn.ghost{ background:transparent; color:var(--dark); border:1px solid rgba(15,23,42,0.06); }
+
+/* 히어로 */
+.hero{
+    margin-top: 30px;
+    height:70vh;
+    min-height:520px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background-image: url('images/banner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color:#fff;
+    padding:40px 24px;
+    box-sizing:border-box;
+    transition:opacity .45s ease, transform .45s ease, visibility .45s;
+    position:relative;
+}
+.hero.hidden{ opacity:0; transform:translateY(-10px); pointer-events:none; visibility:hidden; }
+.hero h1{ font-size:48px; line-height:1.06; margin:0 0 16px; font-weight:800; text-shadow:0 6px 20px rgba(2,6,23,0.25); }
+.hero p{ margin:0; font-size:16px; color:rgba(255,255,255,0.9); }
+
+/* 스크롤 힌트 */
+.scroll-hint{ position:absolute; left:50%; transform:translateX(-50%); bottom:28px; font-size:13px; color:rgba(255,255,255,0.85); display:flex;flex-direction:column;align-items:center;gap:8px;}
+.chev{ width:28px;height:28px;border-left:2px solid rgba(255,255,255,0.9); border-bottom:2px solid rgba(255,255,255,0.9); transform:rotate(-45deg); animation:swim 1.2s infinite; }
+@keyframes swim{0%{transform:translateY(0) rotate(-45deg)}50%{transform:translateY(8px) rotate(-45deg)}100%{transform:translateY(0) rotate(-45deg)}}
+
+/* 메인 콘텐츠 */
+main.content{ position:relative; padding:40px 24px 80px; margin-top:0; background:transparent; z-index:10; }
+.container{ max-width:1100px; margin:0 auto; }
+.section-title{ font-size:20px; margin:8px 0 18px; color:var(--dark); font-weight:700; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+.place-card{ background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(2,6,23,0.06); cursor:pointer; display:flex; flex-direction:column; min-height:170px; }
+.card-thumb{ height:140px; background:linear-gradient(180deg,#e8f0ff,#f7fbff); overflow:hidden; }
+.card-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.card-body{ padding:12px 14px; display:flex; flex-direction:column; gap:8px; flex:1; }
+
+/* 콘텐츠가 아주 짧을 때 메인 영역이 화면을 채우도록 보장 */
+.content .container { min-height: calc(100vh - 64px); /* 헤더 높이 고려 */ }
+.content-footer-spacer{ height: 1px; }
+
+/* 모달(간단) */
+.overlay{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:1100; }
+.overlay.open{ display:flex; }
+.modal{ width:min(880px,94%); background:#fff; border-radius:12px; overflow:hidden; max-height:90vh; display:flex; flex-direction:column; }
+.modal-header{ position:relative; height:200px; background:#f3f8ff; }
+.modal-body{ padding:18px; overflow:auto; }
+
+@media (max-width:700px){
+    .hero h1{font-size:34px}
+    .hero{padding:28px 18px}
+    .app-header{height:56px}
+}
+
+/* 모달 스타일 (기존 사용하던 모달을 여기에 붙여도 됨) */
+.overlay{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; z-index:1100; }
+.overlay.open{ display:flex; }
+.modal{ width:min(880px,94%); background:#fff; border-radius:12px; overflow:hidden; max-height:90vh; display:flex; flex-direction:column; }
+.modal-header{ position:relative; height:200px; background:#f3f8ff; }
+.modal-header img{ width:100%; height:100%; object-fit:cover; display:block; }
+.close-btn{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.9); border:none; width:36px; height:36px; border-radius:8px; cursor:pointer; }
+.modal-body{ padding:18px; overflow:auto; }
+.modal-body h2{ margin:0 0 8px 0; font-size:20px; }
+.tag-area{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.modal .kw{ background:#f1f5f9; color:var(--dark); padding:6px 8px; border-radius:999px; }
+.modal .goodpoints li{ margin-bottom:8px; color:var(--dark); }
+.modal .visit-tip{ margin-top:12px; background:#fafafa; padding:12px; border-radius:8px; color:var(--muted); }
+body{font-family:"Noto Sans KR",Arial,sans-serif;background:#f6f7f9;color:#222;margin:0;padding:32px;}
+.container{max-width:1100px;margin:0 auto;}
+h1{text-align:center;margin-bottom:20px;font-size:26px;}
+.search-card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);display:flex;gap:10px;align-items:center;margin-bottom:22px;}
+.search-card input[type="text"]{flex:1;padding:10px 12px;border:1px solid #e6e9ee;border-radius:8px;font-size:14px;}
+.search-card button{background:#2563eb;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.place-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(2,6,23,0.06);cursor:pointer;display:flex;flex-direction:column;}
+.card-thumb{height:140px;background:#eef6ff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.card-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:110px;}
+.place-name{font-weight:700;font-size:16px;color:#0f172a;}
+.place-intro{font-size:13px;color:#475569;line-height:1.3;min-height:36px;}
+.keywords{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.kw{font-size:12px;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a;}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,11,12,0.55);z-index:1000;}
+.overlay.open{display:flex;}
+.modal{width:min(880px,96%);max-height:90vh;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(2,6,23,0.35);}
+.modal-header{position:relative;height:220px;background:#f3f8ff;}
+.modal-header img{width:100%;height:100%;object-fit:cover;display:block;}
+.close-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.85);border:none;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:16px;}
+.modal-body{padding:18px;overflow:auto;}
+.modal-body h2{margin:0 0 8px 0;font-size:20px;}
+.tag-area{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.goodpoints li{margin-bottom:8px;color:#0f172a;}
+.visit-tip{margin-top:12px;background:#fafafa;padding:12px;border-radius:8px;color:#334155;}
+@media (max-width:520px){.modal-header{height:150px}.card-thumb{height:110px}}

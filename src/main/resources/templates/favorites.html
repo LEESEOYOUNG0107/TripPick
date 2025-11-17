@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,7 @@
     <header>
         <div class="container">
             <!-- 왼쪽: 로고 -->
-            <a href="#" class="brand" aria-label="홈으로">
+            <a href="/" class="brand" aria-label="홈으로">
                 <span class="logo">
                     <img src="" alt="">
                 </span>
@@ -21,22 +21,19 @@
 
             <!-- 가운데: 메뉴 -->
             <nav class="nav" aria-label="주요 메뉴">
-                <a class="nav-link" href="#">
-                    <span class="label">홈</span>
-                </a>
-                <a class="nav-link pill" href="favorites.html">
+                <a class="nav-link pill" th:href="@{/favorites}">
                     <span class="label">찜한 여행지</span>
                 </a>
             </nav>
 
             <!-- 오른쪽: 인증 -->
-            <div class="auth">
-                <a class="login" href="login.html">로그인</a>
-                <a class="signup" href="signUp.html">회원가입</a>
-            </div>
+<!--            <div class="auth">-->
+<!--                <a class="login" href="/login">로그인</a>-->
+<!--                <a class="signup" href="/signup">회원가입</a>-->
+<!--            </div>-->
 
             <div style="padding: 10px;">
-                <span th:text="${username}"></span>
+                <span th:text="${username} + '님, 환영합니다!'"></span>
             </div>
         </div>
     </header>
@@ -45,14 +42,15 @@
         <div id="mainn">
             <h1>찜한 여행지</h1>
             마음에 드는 여행지들을 모아서 확인해보세요
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
+            <div th:each="fav:${favoriteList}" class="card" style="width: 18rem;">
+                <img th:src="${fav.placeImageUrl}" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                        card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <h5 th:text="${fav.placeName}" class="card-title">Card title</h5>
                 </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(favoriteList)}" class="card" style="width: 18rem;">
+                <p>아직 찜한 장소가 없습니다.</p>
             </div>
         </div>
 
