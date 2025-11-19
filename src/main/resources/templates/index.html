@@ -23,7 +23,12 @@
         <span th:text="${username} + '님, 환영합니다!'"></span>
     </div>
 </header>
-
+<div id="pageLoadingOverlay" class="page-loading-overlay hidden" role="status" aria-live="polite" aria-label="데이터 로드 중">
+    <div class="page-loading-card" id="pageLoadingCard">
+        <div class="page-loading-spinner" aria-hidden="true"></div>
+        <div class="page-loading-text">AI가 여행지를 추천하는 중입니다…</div>
+    </div>
+</div>
 <section class="hero" id="heroSection" aria-hidden="false">
     <div>
         <h1>당신만의 완벽한 여행지를<br/>찾아보세요</h1>
@@ -50,7 +55,6 @@
             <p th:text="${area}"></p>
         </div>
 
-        <!-- 결과 카드 그리드 -->
         <section th:if="${placeInfos != null and !#lists.isEmpty(placeInfos)}" class="grid" id="placesGrid">
             <div th:each="placeInfo : ${placeInfos}"
                  class="place-card"
@@ -68,7 +72,6 @@
                         <span th:each="kw : ${placeInfo.keywords}" class="kw" th:text="${kw}">키워드</span>
                     </div>
 
-                    <!-- 숨김 DOM: JS 폴백용 -->
                     <div class="visit-tip-hidden" style="display:none" th:text="${placeInfo.visitTip}"></div>
                     <ul class="goodpoints-hidden" style="display:none">
                         <li th:each="gp : ${placeInfo.goodPoints}" th:text="${gp}">좋은 점</li>
@@ -84,21 +87,16 @@
 </main>
 
 
-<!-- 상세 모달 (즐겨찾기 버튼 추가) -->
 <div class="overlay" id="overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <!-- modal-header 부분 교체 -->
         <div class="modal-header" id="modalHeader">
 
-            <!-- modal-header 안에서 닫기 버튼과 별개로 이 버튼을 왼쪽 상단에 넣으면 됩니다 -->
             <button id="favBtn" class="fav-btn" aria-pressed="false" aria-label="즐겨찾기" title="즐겨찾기">
                 <svg id="favIcon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-                    <!-- 빈 하트 경로와 채운 상태는 CSS에서 제어 -->
                     <path class="heart-path" d="M12 21s-7-4.634-9.064-7.01C0.879 10.78 3.06 6 7.5 6 9.59 6 12 8.06 12 8.06S14.41 6 16.5 6C20.94 6 23.121 10.78 21.064 13.99 19 16.366 12 21 12 21z"></path>
                 </svg>
             </button>
 
-            <!-- 닫기: 오른쪽 -->
             <button class="close-btn" id="closeBtn" aria-label="닫기">✕</button>
         </div>
 
@@ -121,16 +119,93 @@
 </div>
 
 <script th:inline="javascript">
-    // 로그인 안 한 상태 -> 안전하게 null 을 줌
-    // 진짜 로그인 한 회원이면 그 회원의 이름 (예: testid)을 준다.
+    // 로그인 관련 변수 (기존과 동일)
     var loggedInUsername = [[${#authentication != null && #authentication.principal != null && #authentication.principal.toString() != 'anonymousUser' ? #authentication.name : null}]];
-
-    // 컨트롤러가 넘겨준 "찜한 장소 이름 목록"을 JS Set으로 받음
     var userFavoriteNames = new Set(/*[[${favoriteNames}]]*/ []);
-
-    //페이지에 숨겨진 암호를 읽어옵
     var csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
     var csrfHeaderName = /*[[${_csrf != null ? _csrf.headerName : ''}]]*/ '';
+
+    // ===========================================
+    // ⭐⭐ 로딩바 관련 함수 정의 ⭐⭐
+    // ===========================================
+    const pageLoadingOverlay = document.getElementById('pageLoadingOverlay');
+    let initialLoadTime = Date.now(); // 로딩 시작 시간 기록
+
+    /**
+     * 로딩 오버레이를 화면에 표시합니다.
+     */
+    function showPageLoading(text) {
+        if (pageLoadingOverlay) {
+            const tEl = pageLoadingOverlay.querySelector('.page-loading-text');
+            if (tEl) tEl.textContent = text || '잠시만 기다려주세요...';
+
+            // 로딩 오버레이를 표시하고, 시작 시간을 갱신합니다.
+            pageLoadingOverlay.classList.remove('hidden');
+            pageLoadingOverlay.setAttribute('aria-hidden', 'false');
+            initialLoadTime = Date.now();
+        }
+    }
+
+    /**
+     * 로딩 오버레이를 숨깁니다.
+     */
+    function hidePageLoading() {
+        if (pageLoadingOverlay) {
+            const elapsed = Date.now() - initialLoadTime;
+            const minDisplayTime = 100; // 최소 표시 시간 (순간 깜빡임 방지)
+            const delay = Math.max(0, minDisplayTime - elapsed);
+
+            setTimeout(() => {
+                pageLoadingOverlay.classList.add('hidden'); // hidden 클래스 추가하여 숨김
+                pageLoadingOverlay.setAttribute('aria-hidden', 'true');
+            }, delay);
+        }
+    }
+
+    /**
+     * 그리드 내의 모든 이미지 로드가 완료될 때까지 기다렸다가 콜백을 실행합니다.
+     */
+    function waitForImagesInCardsThen(callback) {
+        const grid = document.getElementById('placesGrid');
+        if (!grid) {
+            callback();
+            return;
+        }
+        const imgs = Array.from(grid.querySelectorAll('img'));
+        if (imgs.length === 0) {
+            callback();
+            return;
+        }
+        let remaining = imgs.length;
+        const onOne = () => {
+            remaining--;
+            if (remaining <= 0) callback();
+        };
+
+        let loadedCount = 0;
+        imgs.forEach(img => {
+            if (img.complete) {
+                loadedCount++;
+            } else {
+                img.addEventListener('load', onOne, { once: true });
+                img.addEventListener('error', onOne, { once: true });
+            }
+        });
+
+        // 이미 로드된 이미지가 있다면, 남은 이미지 개수 갱신 후 콜백 호출
+        remaining -= loadedCount;
+        if (remaining <= 0) {
+            callback();
+            return;
+        }
+
+        // 타임아웃 추가: 이미지 로드가 너무 길어지면 6초 후 강제 종료
+        setTimeout(() => {
+            if (remaining > 0) callback();
+        }, 6000);
+    }
+    // ===========================================
+
 
     (function initScreenTransition(){ if (window.__tripPickScreenInit) return; // 중복 방지 window.__tripPickScreenInit = true;
         document.addEventListener('DOMContentLoaded', () => {
@@ -189,6 +264,8 @@
                 hero.classList.add('hidden');
             }
         }); })();
+
+
     document.addEventListener('DOMContentLoaded', function () {
         const cards = document.querySelectorAll('.place-card');
         console.log('place-card count =', cards.length);
@@ -201,6 +278,18 @@
         const modalGoodPoints = document.getElementById('modalGoodPoints');
         const modalVisitTip = document.getElementById('modalVisitTip');
         const favBtn = document.getElementById('favBtn');
+
+        // ⭐⭐ 1. 페이지 로드 완료 시: 로딩바 숨기기 (이미지 로드 대기) ⭐⭐
+        waitForImagesInCardsThen(hidePageLoading);
+
+        // ⭐⭐ 2. 폼 제출 시: 로딩바 표시 ⭐⭐
+        const searchForm = document.querySelector('.search-card');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function (event) {
+                showPageLoading('AI가 여행지를 추천하는 중입니다...');
+            });
+        }
+
 
         function openModal(obj) {
             if (modalImage) {

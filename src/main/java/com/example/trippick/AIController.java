@@ -46,12 +46,12 @@ public class AIController {
 
         CompletableFuture<List<PlaceInfo>> future1 = CompletableFuture.supplyAsync(() -> {
             // 3번째 파라미터 '5'개 요청
-            String json = aiService.getAIResponse(area, mood, 5);
+            String json = aiService.getAIResponse(area, mood);
             return parseJsonArray(json);
         });
         CompletableFuture<List<PlaceInfo>> future2 = CompletableFuture.supplyAsync(() -> {
             // 3번째 파라미터 '5'개 요청
-            String json = aiService.getAIResponse(area, mood, 5);
+            String json = aiService.getAIResponse(area, mood);
             return parseJsonArray(json);
         });
         // 두 스레드가 모두 끝날 때까지 기다렸다가 합치기

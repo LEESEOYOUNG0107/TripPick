@@ -198,3 +198,55 @@ h1{text-align:center;margin-bottom:20px;font-size:26px;}
 .goodpoints li{margin-bottom:8px;color:#0f172a;}
 .visit-tip{margin-top:12px;background:#fafafa;padding:12px;border-radius:8px;color:#334155;}
 @media (max-width:520px){.modal-header{height:150px}.card-thumb{height:110px}}
+
+/* ========== Loading overlay styles (추가) ========== */
+.page-loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(3px);
+    transition: opacity .22s ease, visibility .22s;
+    visibility: visible; /* 초기에는 숨기지 않음 */
+    opacity: 1;
+}
+.page-loading-overlay.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+.page-loading-card {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    padding:18px 22px;
+    background:white;
+    border-radius:10px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+    font-family: inherit;
+}
+.page-loading-spinner {
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    border:6px solid #e6e9ee;
+    border-top-color: var(--accent);
+    animation: spin 0.9s linear infinite;
+}
+.page-loading-text {
+    font-size:15px;
+    color:var(--dark);
+    font-weight:600;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@media (max-width:520px) {
+    .page-loading-card { padding:14px 16px; }
+    .page-loading-text { font-size:14px; }
+}
