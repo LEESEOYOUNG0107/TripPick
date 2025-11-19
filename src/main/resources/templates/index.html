@@ -125,30 +125,27 @@
     var csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
     var csrfHeaderName = /*[[${_csrf != null ? _csrf.headerName : ''}]]*/ '';
 
-    // ===========================================
-    // ⭐⭐ 로딩바 관련 함수 정의 ⭐⭐
-    // ===========================================
+
+
+
+    // 로딩바 관련 함수
     const pageLoadingOverlay = document.getElementById('pageLoadingOverlay');
     let initialLoadTime = Date.now(); // 로딩 시작 시간 기록
 
-    /**
-     * 로딩 오버레이를 화면에 표시합니다.
-     */
+    //로딩 오버레이를 화면에 표시
     function showPageLoading(text) {
         if (pageLoadingOverlay) {
             const tEl = pageLoadingOverlay.querySelector('.page-loading-text');
             if (tEl) tEl.textContent = text || '잠시만 기다려주세요...';
 
-            // 로딩 오버레이를 표시하고, 시작 시간을 갱신합니다.
+            // 로딩 오버레이를 표시하고 시작 시간을 갱신
             pageLoadingOverlay.classList.remove('hidden');
             pageLoadingOverlay.setAttribute('aria-hidden', 'false');
             initialLoadTime = Date.now();
         }
     }
 
-    /**
-     * 로딩 오버레이를 숨깁니다.
-     */
+    //로딩 오버레이를 숨감
     function hidePageLoading() {
         if (pageLoadingOverlay) {
             const elapsed = Date.now() - initialLoadTime;
@@ -162,9 +159,7 @@
         }
     }
 
-    /**
-     * 그리드 내의 모든 이미지 로드가 완료될 때까지 기다렸다가 콜백을 실행합니다.
-     */
+    //그리드 내의 모든 이미지 로드가 완료될 때까지 기다렸다가 콜백을 실행
     function waitForImagesInCardsThen(callback) {
         const grid = document.getElementById('placesGrid');
         if (!grid) {
@@ -279,10 +274,10 @@
         const modalVisitTip = document.getElementById('modalVisitTip');
         const favBtn = document.getElementById('favBtn');
 
-        // ⭐⭐ 1. 페이지 로드 완료 시: 로딩바 숨기기 (이미지 로드 대기) ⭐⭐
+        //1. 페이지 로드 완료 시: 로딩바 숨기기 (이미지 로드 대기)
         waitForImagesInCardsThen(hidePageLoading);
 
-        // ⭐⭐ 2. 폼 제출 시: 로딩바 표시 ⭐⭐
+        //2. 폼 제출 시: 로딩바 표시
         const searchForm = document.querySelector('.search-card');
         if (searchForm) {
             searchForm.addEventListener('submit', function (event) {
