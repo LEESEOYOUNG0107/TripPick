@@ -5,58 +5,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이 빼이보릿</title>
-    <link rel="stylesheet" href="/favorites.css">
+    <link rel="stylesheet" th:href="@{/favorites.css}">
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <!-- 왼쪽: 로고 -->
-            <a href="/" class="brand" aria-label="홈으로">
-                <span class="logo">
-                    <img src="" alt="">
-                </span>
-                <span class="title">TripPick</span>
+<header>
+    <div class="header-container">
+        <a href="/" class="brand" aria-label="홈으로" style="text-decoration: none; color: black; font-weight: bold; font-size: 20px;">
+            <span class="title">TripPick</span>
+        </a>
+        <nav class="nav" aria-label="주요 메뉴" style="margin-left: 20px;">
+            <a class="nav-link pill" th:href="@{/favorites}" style="text-decoration: none; color: #333;">
+                <span class="label">찜한 여행지</span>
             </a>
-
-            <!-- 가운데: 메뉴 -->
-            <nav class="nav" aria-label="주요 메뉴">
-                <a class="nav-link pill" th:href="@{/favorites}">
-                    <span class="label">찜한 여행지</span>
-                </a>
-            </nav>
-
-            <!-- 오른쪽: 인증 -->
-<!--            <div class="auth">-->
-<!--                <a class="login" href="/login">로그인</a>-->
-<!--                <a class="signup" href="/signup">회원가입</a>-->
-<!--            </div>-->
-
-            <div style="padding: 10px;">
-                <span th:text="${username} + '님, 환영합니다!'"></span>
-            </div>
+        </nav>
+        <div style="padding: 10px; margin-left: auto;">
+            <span th:text="${username} + '님, 환영합니다!'"></span>
         </div>
-    </header>
+    </div>
+</header>
 
-    <main>
-        <div id="mainn">
-            <h1>찜한 여행지</h1>
-            마음에 드는 여행지들을 모아서 확인해보세요
-            <div th:each="fav:${favoriteList}" class="card" style="width: 18rem;">
-                <img th:src="${fav.placeImageUrl}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 th:text="${fav.placeName}" class="card-title">Card title</h5>
+<main>
+    <div id="mainn" style="padding: 20px;">
+        <h1>찜한 여행지</h1>
+        <p>마음에 드는 여행지들을 모아서 확인해보세요</p>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <div class="card-list">
+
+            <div th:each="fav:${favorites}" class="card"
+                 th:data-name="${fav.placeName}"
+                 th:data-intro="${fav.placeIntroduc}"
+                 th:data-image="${fav.placeImageUrl}"
+                 onclick="openFavModal(this)">
+
+                <img th:src="${fav.placeImageUrl}" alt="여행지 사진">
+                <div style="padding: 10px;">
+                    <h3 th:text="${fav.placeName}" style="margin: 0 0 5px 0;">장소 이름</h3>
+                    <p th:text="${fav.placeIntroduc}" style="color: gray; font-size: 12px; margin: 0;"></p>
                 </div>
             </div>
-
-            <div th:if="${#lists.isEmpty(favoriteList)}" class="card" style="width: 18rem;">
-                <p>아직 찜한 장소가 없습니다.</p>
-            </div>
         </div>
 
-    </main>
+        <div th:if="${favorites == null or #lists.isEmpty(favorites)}" style="text-align: center; padding: 50px; color: #888;">
+            <p>아직 찜한 장소가 없습니다. 검색해서 하트를 눌러보세요!</p>
+        </div>
 
+        <div id="placeModal" class="modal-overlay">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <div class="modal-body">
+                    <img id="modalImage" src="" alt="장소 이미지" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+                    <h2 id="modalName" style="margin-top: 0;"></h2>
+                    <p id="modalIntro" style="line-height: 1.6; color: #444;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
+<script>
+    function openFavModal(element) {
+        const name = element.getAttribute('data-name');
+        const intro = element.getAttribute('data-intro');
+        const image = element.getAttribute('data-image');
+
+        const modal = document.getElementById('placeModal');
+        const modalName = document.getElementById('modalName');
+        const modalIntro = document.getElementById('modalIntro');
+        const modalImage = document.getElementById('modalImage');
+
+        modalName.innerText = name;
+        modalIntro.innerText = intro;
+        modalImage.src = image;
+
+        modal.classList.add('open');
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('placeModal');
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+    }
+</script>
+
+<style>
+    /* 헤더용 스타일 */
+    .header-container {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* 카드 목록 전용 스타일 (제목 옆에 안 붙게 별도 분리) */
+    .card-list {
+        display: flex;
+        flex-wrap: wrap; /* 공간 부족하면 다음 줄로 */
+        gap: 20px;       /* 카드 사이 간격 */
+        justify-content: flex-start;
+    }
+
+    .card {
+        width: 18rem; /* 너비 고정 */
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden; /* 이미지 둥글게 깎기 */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        cursor: pointer;
+        background: white;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px); /* 마우스 올리면 둥실 */
+    }
+
+    .card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover; /* 이미지 비율 유지하며 꽉 채우기 */
+    }
+
+    /* 모달 스타일 */
+    .modal-overlay {
+        display: none;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center; align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: white; padding: 25px; border-radius: 15px;
+        width: 90%; max-width: 500px;
+        position: relative;
+    }
+    .close-btn {
+        position: absolute; top: 10px; right: 15px;
+        cursor: pointer; font-size: 28px; color: #888;
+    }
+    .close-btn:hover { color: black; }
+</style>
 </body>
-
 </html>

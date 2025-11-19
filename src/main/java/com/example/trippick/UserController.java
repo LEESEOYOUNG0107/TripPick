@@ -44,19 +44,6 @@ public class UserController {
         return "login"; // 'login.html' 파일을 렌더링하여 반환
     }
 
-    @GetMapping("/favorites")
-    public String showFavorites(Model model, Principal principal) {
-        String loggedinUsername = principal.getName();
-        model.addAttribute("username", loggedinUsername);
-
-        // 현재 로그인한 유저의 찜 목록(List<Favorite>)을 가져옵니다.
-        List<Favorite> favorites = favoriteService.getFavorites(loggedinUsername);
-
-        // favorites.html이 사용할 수 있도록 "favoriteList"라는 이름으로 Model에 담습니다.
-        model.addAttribute("favoriteList", favorites);
-        return "favorites";
-    }
-
     @PostMapping("/favorites/add")
     @ResponseBody                               // JSON이 보낸 데이터       누가 찜 했는지 확인
     public String addFavorite(@RequestBody AddFavoriteRequest request, Principal principal) {
@@ -66,6 +53,22 @@ public class UserController {
         }catch (Exception e){
             return "{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}";
         }
+    }
+
+    @GetMapping("/favorites")
+    public String showFavorites(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        // 1. 찜 목록 가져오기
+        List<Favorite> list = favoriteService.getFavorites(principal.getName());
+
+        // 2. HTML로 보내기
+        model.addAttribute("favorites", list);
+        model.addAttribute("username", principal.getName());
+
+        return "favorites"; // favorites.html 열기
     }
 
     @PostMapping("/favorites/remove")

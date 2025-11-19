@@ -9,15 +9,15 @@ import java.util.ArrayList;
 
 @Service
 public class AIService {
-//    @Value("${openai.api.key}")
+    @Value("${openai.api.key}")
     private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
     /**
      * 프롬포트작성
      */
-    public String getAIResponse(String area,String mood) {
+    public String getAIResponse(String area,String mood, int count) {
         String prompt = String.format(
-                "%s 지역에서 '%s'의 조건에 해당하는 실제로 존재하는 장소를 정확히 10개 추천하고, 다음 JSON 형식에 맞춰 응답해줘. " +
+                "%s 지역에서 '%s'의 조건에 해당하는 실제로 존재하는 장소를 정확히 %d개 추천하고, 다음 JSON 형식에 맞춰 응답해줘. " +
                         "응답은 반드시 JSON 배열(각 원소는 아래 객체 형식)로만 출력해야 하고, 형식과 필드 이름은 원본과 정확히 일치해야 해. " +
                         "각 장소 정보는 블로그, 후기, 공식 홈페이지, 지도 등 여러 실제 출처(후기 종합)를 확인해 종합한 사실 기반 정보여야 하고, 장소와 이미지는 실제로 존재해 프로그램에서 활용 가능한 공개 URL을 포함해야 해. " +
                         "다음 필드를 정확히 지켜서 출력해야 해:\n" +
@@ -43,7 +43,7 @@ public class AIService {
                         "예: [{...}, {...}, ...]\n" +
                         "- 지역 및 조건은 String.format에 전달된 첫 번째와 두 번째 인자에 따라 적용될 것.\n" +
                         "- 장소가 존재함을 확인한 출처(블로그/후기/공식 페이지/지도 등)의 링크는 내부적으로 참조해 내용을 종합하되, 출력 JSON에는 링크를 포함하지 않아도 됨.\n" +
-                        "이제 위 규칙을 엄격히 지켜서 JSON 형식으로 10개 장소를 추천해줘.", area, mood);
+                        "이제 위 규칙을 엄격히 지켜서 JSON 형식으로 10개 장소를 추천해줘.", area, mood, count);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();

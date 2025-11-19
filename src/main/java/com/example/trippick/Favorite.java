@@ -2,11 +2,7 @@ package com.example.trippick;
 import jakarta.persistence.*;
 
 @Entity
-public class Favorite {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Favorite extends BaseEntity{
     @ManyToOne //회원 1명이 찜을 여러개 할 수 있다
     @JoinColumn(name = "user_userkey") //user테이블에 userkey와 연결
     private User user;
@@ -26,18 +22,13 @@ public class Favorite {
     }
 
     //찜 목록 읽을 때 필요
-    public Long getId() {
-        return id;
-    }
     public User getUser() {
         return user;
     }
     public String getPlaceName() {
         return placeName;
     }
-    public String getPlaceIntroduc() {
-        return placeIntroduc;
-    }
+    public String getPlaceIntroduc() { return placeIntroduc; }
     public String getPlaceImageUrl() {
         return placeImageUrl;
     }

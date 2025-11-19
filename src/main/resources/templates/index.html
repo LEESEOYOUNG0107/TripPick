@@ -277,7 +277,6 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.status === 'success') {
-                                    alert('찜 목록에서 삭제되었습니다!');
                                     userFavoriteNames.delete(obj.name); // JS 목록에서 삭제
                                     favBtn.classList.remove('active');  // 하트 회색으로
                                     favBtn.setAttribute('aria-pressed', 'false');
@@ -295,7 +294,6 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.status === 'success') {
-                                    alert('찜 목록에 추가되었습니다!');
                                     // js 목록에도 이 장소를 추가해서, 모달을 껐다 켜도 하트가 유지되게 함
                                     userFavoriteNames.add(obj.name);
                                     favBtn.classList.add('active'); // 하트 빨간색으로
