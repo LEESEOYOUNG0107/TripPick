@@ -250,3 +250,45 @@ h1{text-align:center;margin-bottom:20px;font-size:26px;}
     .page-loading-card { padding:14px 16px; }
     .page-loading-text { font-size:14px; }
 }
+modal {
+    position: relative; /* 자식 요소의 absolute 기준점 */
+    overflow: hidden;
+}
+
+/* 이미지와 헤더를 감싸는 컨테이너 */
+.modal-top-section {
+    width: 100%;
+    height: 200px; /* 이미지 높이 설정 */
+    position: relative; /* 헤더 absolute 기준점 */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    overflow: hidden;
+}
+
+/* 동적으로 바인딩되는 이미지 스타일 */
+#modalImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 영역을 채우도록 */
+    display: block;
+}
+
+/* 헤더 (버튼) 스타일: 이미지 위에 띄우기 */
+.modal-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10; /* 이미지보다 상위에 위치 */
+    padding: 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%); /* 버튼 주변에 명암 대비를 위한 그라데이션 추가 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* modal-body는 이미지 아래에서 시작하도록 */
+.modal-body {
+    padding: 15px 20px;
+}

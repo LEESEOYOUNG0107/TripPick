@@ -89,17 +89,19 @@
 
 <div class="overlay" id="overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-header" id="modalHeader">
 
-            <button id="favBtn" class="fav-btn" aria-pressed="false" aria-label="즐겨찾기" title="즐겨찾기">
-                <svg id="favIcon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-                    <path class="heart-path" d="M12 21s-7-4.634-9.064-7.01C0.879 10.78 3.06 6 7.5 6 9.59 6 12 8.06 12 8.06S14.41 6 16.5 6C20.94 6 23.121 10.78 21.064 13.99 19 16.366 12 21 12 21z"></path>
-                </svg>
-            </button>
+        <div class="modal-top-section">
+            <img id="modalImage" src="" alt="장소 대표 이미지" style="display:none;">
 
-            <button class="close-btn" id="closeBtn" aria-label="닫기">✕</button>
+            <div class="modal-header" id="modalHeader">
+                <button id="favBtn" class="fav-btn" aria-pressed="false" aria-label="즐겨찾기" title="즐겨찾기">
+                    <svg id="favIcon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                        <path class="heart-path" d="M12 21s-7-4.634-9.064-7.01C0.879 10.78 3.06 6 7.5 6 9.59 6 12 8.06 12 8.06S14.41 6 16.5 6C20.94 6 23.121 10.78 21.064 13.99 19 16.366 12 21 12 21z"></path>
+                    </svg>
+                </button>
+                <button class="close-btn" id="closeBtn" aria-label="닫기">✕</button>
+            </div>
         </div>
-
         <div class="modal-body">
             <h2 id="modalTitle">장소 이름</h2>
             <div class="tag-area" id="modalKeywords"></div>
@@ -126,51 +128,40 @@
     var csrfHeaderName = /*[[${_csrf != null ? _csrf.headerName : ''}]]*/ '';
 
 
-
-
-    // 로딩바 관련 함수
+    // 로딩바 관련 함수 (변동 없음)
     const pageLoadingOverlay = document.getElementById('pageLoadingOverlay');
-    let initialLoadTime = Date.now(); // 로딩 시작 시간 기록
+    let initialLoadTime = Date.now();
 
-    //로딩 오버레이를 화면에 표시
     function showPageLoading(text) {
         if (pageLoadingOverlay) {
             const tEl = pageLoadingOverlay.querySelector('.page-loading-text');
             if (tEl) tEl.textContent = text || '잠시만 기다려주세요...';
 
-            // 로딩 오버레이를 표시하고 시작 시간을 갱신
             pageLoadingOverlay.classList.remove('hidden');
             pageLoadingOverlay.setAttribute('aria-hidden', 'false');
             initialLoadTime = Date.now();
         }
     }
 
-    //로딩 오버레이를 숨감
     function hidePageLoading() {
         if (pageLoadingOverlay) {
             const elapsed = Date.now() - initialLoadTime;
-            const minDisplayTime = 100; // 최소 표시 시간 (순간 깜빡임 방지)
+            const minDisplayTime = 100;
             const delay = Math.max(0, minDisplayTime - elapsed);
 
             setTimeout(() => {
-                pageLoadingOverlay.classList.add('hidden'); // hidden 클래스 추가하여 숨김
+                pageLoadingOverlay.classList.add('hidden');
                 pageLoadingOverlay.setAttribute('aria-hidden', 'true');
             }, delay);
         }
     }
 
-    //그리드 내의 모든 이미지 로드가 완료될 때까지 기다렸다가 콜백을 실행
     function waitForImagesInCardsThen(callback) {
         const grid = document.getElementById('placesGrid');
-        if (!grid) {
-            callback();
-            return;
-        }
+        if (!grid) { callback(); return; }
         const imgs = Array.from(grid.querySelectorAll('img'));
-        if (imgs.length === 0) {
-            callback();
-            return;
-        }
+        if (imgs.length === 0) { callback(); return; }
+
         let remaining = imgs.length;
         const onOne = () => {
             remaining--;
@@ -187,14 +178,12 @@
             }
         });
 
-        // 이미 로드된 이미지가 있다면, 남은 이미지 개수 갱신 후 콜백 호출
         remaining -= loadedCount;
         if (remaining <= 0) {
             callback();
             return;
         }
 
-        // 타임아웃 추가: 이미지 로드가 너무 길어지면 6초 후 강제 종료
         setTimeout(() => {
             if (remaining > 0) callback();
         }, 6000);
@@ -202,7 +191,7 @@
     // ===========================================
 
 
-    (function initScreenTransition(){ if (window.__tripPickScreenInit) return; // 중복 방지 window.__tripPickScreenInit = true;
+    (function initScreenTransition(){ if (window.__tripPickScreenInit) return; window.__tripPickScreenInit = true;
         document.addEventListener('DOMContentLoaded', () => {
             const header = document.getElementById('appHeader'); const hero = document.getElementById('heroSection');
             const mainContent = document.getElementById('mainContent'); const btnHome = document.getElementById('btnHome');
@@ -210,12 +199,6 @@
             if (btnHome) {
                 btnHome.addEventListener('click', () => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
-
-            if (btnAsk && mainContent) {
-                btnAsk.addEventListener('click', () => {
-                    mainContent.scrollIntoView({ behavior: 'smooth' });
                 });
             }
 
@@ -230,10 +213,8 @@
                     });
                 }, { threshold: 0.06 });
                 io.observe(mainContent);
-                // 필요하면 전역 변수로 보관: window._tripPickIO = io;
             }
 
-// 헤더 자동 숨김(스크롤 방향)
             let lastY = window.scrollY;
             let ticking = false;
             window.addEventListener('scroll', () => {
@@ -254,7 +235,6 @@
                 }
             });
 
-// 작은 화면 초기 상태 처리
             if (window.innerHeight < 600 && hero) {
                 hero.classList.add('hidden');
             }
@@ -266,7 +246,12 @@
         console.log('place-card count =', cards.length);
         const overlay = document.getElementById('overlay');
         const closeBtn = document.getElementById('closeBtn');
+
+        // ------------------------------------------------------------------
+        // 변경 부분 1: modalImage 요소 선언 추가
         const modalImage = document.getElementById('modalImage');
+        // ------------------------------------------------------------------
+
         const modalTitle = document.getElementById('modalTitle');
         const modalKeywords = document.getElementById('modalKeywords');
         const modalIntro = document.getElementById('modalIntro');
@@ -286,16 +271,26 @@
         }
 
 
+        // ------------------------------------------------------------------
+        // 변경 부분 2: openModal 함수 로직 수정
         function openModal(obj) {
+            // 이미지 설정 로직 추가
             if (modalImage) {
                 if (obj.imageUrl) {
                     modalImage.src = obj.imageUrl;
                     modalImage.style.display = 'block';
+                    // 이미지 로드 오류 시 숨김 처리
+                    modalImage.onerror = function() {
+                        this.style.display='none';
+                        this.removeAttribute('src');
+                    };
                 } else {
                     modalImage.style.display = 'none';
                     modalImage.removeAttribute('src');
                 }
             }
+            // ------------------------------------------------------------------
+
 
             if (modalTitle) modalTitle.textContent = obj.name || '';
             if (modalIntro) modalIntro.textContent = obj.introduction || '';
@@ -349,7 +344,7 @@
                     const favoriteData = {
                         placeName: obj.name,
                         placeIntroduction: obj.introduction,
-                        placeImageUrl: obj.imageUrl
+                        placeImageUrl: obj.imageUrl // 이미지 URL도 함께 전송
                     };
 
                     if(favBtn.classList.contains('active')){
@@ -394,6 +389,9 @@
                 };
             }
         }
+        // 변경 부분 2: openModal 함수 로직 수정 끝
+        // ------------------------------------------------------------------
+
 
         function closeModal() {
             if (overlay) {
@@ -410,6 +408,7 @@
                 const obj = {};
                 obj.name = card.getAttribute('data-name') || card.querySelector('.place-name')?.textContent?.trim() || '';
                 obj.introduction = card.getAttribute('data-intro') || card.querySelector('.place-intro')?.textContent?.trim() || '';
+                // data-image 속성에서 imageUrl을 정확히 가져옵니다.
                 obj.imageUrl = card.getAttribute('data-image') || card.querySelector('.card-thumb img')?.src || '';
                 const kwEls = card.querySelectorAll('.kw');
                 obj.keywords = Array.from(kwEls).map(n => n.textContent.trim());
@@ -449,5 +448,3 @@
         });
     });
 </script>
-</body>
-</html>
